@@ -124,7 +124,13 @@ function renderQ(){
   $('q-num').textContent=`Frage ${Q.idx+1} von ${Q.qs.length}`;
   $('q-thema').textContent=q.thema;
   $('q-timer-wrap').style.display=exam?'flex':'none';
-  $('multi-tag').style.display=q.typ==='multiple_select'?'inline-block':'none';
+  const correctCount = q.richtige_antworten.length;
+  if(q.typ==='multiple_select'){
+    $('multi-tag').style.display='inline-block';
+    $('multi-tag').textContent=correctCount+' Antworten richtig';
+  } else {
+    $('multi-tag').style.display='none';
+  }
   $('q-text').textContent=q.frage;
 
   const oc=$('opts');
@@ -152,7 +158,9 @@ function pick(opt){
   if(Q.done) return;
   const q=Q.qs[Q.idx];
   if(q.typ==='multiple_select'){
-    Q.sel.has(opt)?Q.sel.delete(opt):Q.sel.add(opt);
+    if(Q.sel.has(opt)){ Q.sel.delete(opt); }
+    else if(Q.sel.size < q.richtige_antworten.length){ Q.sel.add(opt); }
+    else{ return; }
   } else { Q.sel=new Set([opt]); }
   document.querySelectorAll('.opt').forEach(b=>{
     const on=Q.sel.has(b.dataset.o);
