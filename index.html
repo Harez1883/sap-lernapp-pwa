@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SAP Lernen">
+<meta name="theme-color" content="#0F1923">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<title>SAP Lernapp</title>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="s-home" class="screen safe safebot">
+  <div class="scroll">
+    <div style="margin-bottom:6px">
+      <div class="logo">SAP Lernapp</div>
+      <div class="logo-sub">C_TS4FI_2023 &middot; FI/CO Vorbereitung</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-val" id="h-acc" style="color:#4A9EBF">0%</div>
+        <div class="stat-lbl">Genauigkeit</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val" id="h-mas" style="color:#4CAF50">0/187</div>
+        <div class="stat-lbl">Beherrscht (3&times;&checkmark;)</div>
+      </div>
+    </div>
+
+    <div class="sec-lbl">Lernmodus</div>
+    <div class="card" onclick="openSetup('learn')">
+      <div class="card-icon" style="background:rgba(74,158,191,.15)">📚</div>
+      <div class="card-info">
+        <div class="card-title">Lernmodus starten</div>
+        <div class="card-sub">Spaced Repetition &middot; sofortiges Feedback</div>
+      </div>
+      <div class="card-arr">›</div>
+    </div>
+    <div class="card" onclick="openSetup('exam')">
+      <div class="card-icon" style="background:rgba(224,112,96,.15)">⏱️</div>
+      <div class="card-info">
+        <div class="card-title">Prüfungsmodus</div>
+        <div class="card-sub">80 Fragen &middot; 180 Minuten &middot; kein Feedback</div>
+      </div>
+      <div class="card-arr">›</div>
+    </div>
+    <div class="card" onclick="openErrors()">
+      <div class="card-icon" style="background:rgba(255,179,71,.15)">❌</div>
+      <div class="card-info">
+        <div class="card-title">Fehler-Pool</div>
+        <div class="card-sub">Nur falsche Antworten wiederholen</div>
+      </div>
+      <div class="card-arr">›</div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="sec-lbl">Auswertung</div>
+    <div class="card" onclick="openStats()">
+      <div class="card-icon" style="background:rgba(155,89,182,.15)">📊</div>
+      <div class="card-info">
+        <div class="card-title">Statistiken</div>
+        <div class="card-sub">Fortschritt pro Thema anzeigen</div>
+      </div>
+      <div class="card-arr">›</div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;font-family:var(--mono);font-size:11px;color:#4A5568">
+      187 Fragen &middot; WBS + SAP Original &middot; Offline
+    </div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div id="s-setup" class="screen safe safebot">
+  <div class="hdr">
+    <button class="back" onclick="home()">‹</button>
+    <div class="hdr-title" id="su-title">Lernmodus</div>
+  </div>
+  <div class="scroll">
+    <div class="sec-lbl">Fragenquelle</div>
+    <div class="src-row">
+      <button class="src-btn on" data-s="Alle">Alle</button>
+      <button class="src-btn" data-s="WBS">WBS</button>
+      <button class="src-btn" data-s="SAP">SAP Original</button>
+    </div>
+
+    <div class="sec-lbl">Thema</div>
+    <select id="thema"></select>
+
+    <div id="su-cnt">
+      <div class="sec-lbl">Anzahl Fragen</div>
+      <div class="sl-row">
+        <input type="range" id="sl" min="10" max="60" step="10" value="60">
+        <span class="sl-val" id="sl-val">60</span>
+      </div>
+    </div>
+
+    <div id="su-exam" class="exam-box" style="display:none">
+      <div class="exam-box-title">⚠️ Prüfungsregeln</div>
+      <p>• 80 Fragen &middot; 180 Minuten Timer<br>
+         • Kein Feedback während der Prüfung<br>
+         • Bestanden ab 70% (56/80 Punkte)</p>
+    </div>
+
+    <div style="flex:1;min-height:20px"></div>
+    <button id="su-start" class="btn btn-blue" onclick="startQuiz()">Lernen starten</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="s-quiz" class="screen safe safebot">
+  <div class="hdr">
+    <button class="back" onclick="quitQuiz()">✕</button>
+    <div style="flex:1"></div>
+    <div id="q-timer-wrap" style="display:none">
+      <span id="q-timer" class="timer">03:00</span>
+    </div>
+  </div>
+  <div class="pbar"><div id="q-bar" class="pbar-fill" style="width:0%"></div></div>
+  <div class="scroll">
+    <div class="qmeta">
+      <span id="q-num" class="qnum"></span>
+      <span id="q-thema" class="qthema"></span>
+    </div>
+    <span id="multi-tag" class="multi-tag" style="display:none">Mehrere Antworten möglich</span>
+    <div id="q-text" class="qtext"></div>
+    <div id="opts"></div>
+    <button id="q-confirm" class="btn btn-blue" onclick="confirm()" disabled>Antwort bestätigen</button>
+
+    <div id="fb-area" style="display:none;margin-top:16px">
+      <div id="fb-box" class="fb ok">
+        <span id="fb-ico" class="fb-ico"></span>
+        <span id="fb-txt" class="fb-txt"></span>
+      </div>
+      <button id="exp-btn" class="exp-btn">
+        <span>💡</span>
+        <span class="exp-lbl">Erklärung anzeigen</span>
+        <span class="exp-arr">⌄</span>
+      </button>
+      <div id="exp-box" class="exp-box">
+        <div class="exp-hl">Warum richtig:</div>
+        <div id="exp-richtig" class="exp-richtig"></div>
+        <hr class="exp-hr">
+        <div id="exp-esels-row" class="exp-esels">
+          <span>🧠</span>
+          <span id="exp-esels"></span>
+        </div>
+      </div>
+      <div class="conf-lbl">Wie sicher warst du?</div>
+      <div class="conf-row">
+        <button class="conf-btn u" onclick="setConf(1)">😅 Unsicher / Geraten</button>
+        <button class="conf-btn s" onclick="setConf(2)">✅ War ich sicher</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="s-result" class="screen safe safebot">
+  <div class="scroll" style="display:flex;flex-direction:column;align-items:center;padding-top:20px">
+    <div id="r-circle" class="res-circle">
+      <div id="r-pct" class="res-pct"></div>
+      <div id="r-sub" class="res-sub"></div>
+    </div>
+    <div id="r-title" class="res-title"></div>
+    <div id="r-detail" class="res-detail"></div>
+    <div class="res-actions" style="width:100%">
+      <button id="r-err-btn" class="btn btn-red" style="display:none"></button>
+      <button class="btn btn-out" onclick="home()">Zurück zum Hauptmenü</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEHLER-POOL -->
+<div id="s-errors" class="screen safe safebot">
+  <div class="hdr">
+    <button class="back" onclick="home()">‹</button>
+    <div class="hdr-title">Fehler-Pool</div>
+  </div>
+  <div class="scroll">
+    <div id="err-hdr" style="display:none;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span id="err-lbl" style="font-size:13px;color:#8899AA"></span>
+      <button id="err-start" class="btn btn-red btn-sm">Alle üben</button>
+    </div>
+    <div id="err-list"></div>
+    <div id="err-empty" class="empty">
+      <div class="empty-ico">✅</div>
+      <div class="empty-title">Noch keine Fehler!</div>
+      <div class="empty-txt">Starte einen Lernmodus um zu üben.</div>
+    </div>
+  </div>
+</div>
+
+<!-- STATISTIKEN -->
+<div id="s-stats" class="screen safe safebot">
+  <div class="hdr">
+    <button class="back" onclick="home()">‹</button>
+    <div class="hdr-title">Statistiken</div>
+    <button onclick="resetStats()" style="background:none;border:none;color:#8899AA;font-size:20px;cursor:pointer;padding:4px 0 4px 8px">🗑️</button>
+  </div>
+  <div class="scroll">
+    <div class="sg">
+      <div class="stat"><div class="stat-val" id="st-acc" style="color:#4A9EBF">—</div><div class="stat-lbl">Genauigkeit</div></div>
+      <div class="stat"><div class="stat-val" id="st-mas" style="color:#4CAF50">—</div><div class="stat-lbl">Beherrscht</div></div>
+      <div class="stat"><div class="stat-val" id="st-ok" style="color:#4CAF50">—</div><div class="stat-lbl">Richtig gesamt</div></div>
+      <div class="stat"><div class="stat-val" id="st-bad" style="color:#E07060">—</div><div class="stat-lbl">Falsch gesamt</div></div>
+    </div>
+    <div class="sec-lbl">Themen-Übersicht</div>
+    <div id="st-list"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal-bg" onclick="if(event.target===this)hideModal()">
+  <div class="modal">
+    <div id="m-title" class="modal-title"></div>
+    <div id="m-txt" class="modal-txt"></div>
+    <div class="modal-row">
+      <button class="btn btn-out" id="m-cancel" onclick="hideModal()">Abbrechen</button>
+      <button class="btn btn-red" id="m-ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
