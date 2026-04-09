@@ -23,16 +23,6 @@ Eine Progressive Web App (PWA) zur Vorbereitung auf die SAP-Zertifizierung **C_T
 
 ---
 
-## 🚀 GitHub Pages einrichten
-
-1. Repository auf GitHub erstellen (Public)
-2. Alle Dateien hochladen
-3. **Settings** → **Pages** → Branch: `main` → **Save**
-4. Nach 1–2 Minuten erreichbar unter:
-   `https://DEIN-NAME.github.io/REPO-NAME`
-
----
-
 ## ✨ Features
 
 | Feature | Beschreibung |
@@ -45,25 +35,6 @@ Eine Progressive Web App (PWA) zur Vorbereitung auf die SAP-Zertifizierung **C_T
 | ⏱️ Prüfungsmodus | 80 Fragen, 180 Minuten, kein Feedback |
 | 📊 Statistiken | Fortschritt pro Thema mit Balkenanzeige |
 | 📶 Offline | Funktioniert komplett ohne Internet |
-
----
-
-## 📂 Dateistruktur
-
-```
-├── index.html              # Haupt-App (alle Screens)
-├── manifest.json           # PWA-Konfiguration (Icon, Name, Farbe)
-├── sw.js                   # Service Worker (Offline-Unterstützung)
-├── css/
-│   └── style.css           # Gesamtes Design
-├── js/
-│   ├── app.js              # App-Logik (Quiz, Statistiken, SRS)
-│   └── data.js             # 187 Fragen mit Erklärungen
-└── icons/
-    ├── icon-192.png        # App-Icon (Android + PWA)
-    ├── icon-512.png        # App-Icon groß
-    └── apple-touch-icon.png # App-Icon iPhone
-```
 
 ---
 
@@ -108,4 +79,4 @@ Das System merkt sich für jede Frage wie oft du sie richtig oder falsch beantwo
 
 ---
 
-*Erstellt mit Claude · Alle Fragen basieren auf WBS Training und SAP Learning Hub Materialien*
+*Alle Fragen basieren auf WBS Training und SAP Learning Hub Materialien*
